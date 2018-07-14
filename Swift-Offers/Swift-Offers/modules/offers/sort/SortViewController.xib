@@ -54,8 +54,8 @@
                                         <constraint firstAttribute="height" constant="27" id="KEL-OF-Byz"/>
                                     </constraints>
                                     <segments>
-                                        <segment title="First"/>
-                                        <segment title="Second"/>
+                                        <segment title="Ascending"/>
+                                        <segment title="Descending"/>
                                     </segments>
                                     <connections>
                                         <action selector="sortAscDescSegmentChangedWithSender:" destination="-1" eventType="valueChanged" id="ilA-cD-J9d"/>

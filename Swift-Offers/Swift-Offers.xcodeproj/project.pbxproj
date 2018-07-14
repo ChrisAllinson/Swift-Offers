@@ -162,7 +162,7 @@
 			isa = PBXGroup;
 			children = (
 				2F2D1EFC20F97F8A00DD915B /* offers */,
-				2F2D1F0E20FA062700DD915B /* offer */,
+				2F2D1F0E20FA062700DD915B /* offer details */,
 			);
 			path = modules;
 			sourceTree = "<group>";
@@ -192,7 +192,7 @@
 			path = cell;
 			sourceTree = "<group>";
 		};
-		2F2D1F0E20FA062700DD915B /* offer */ = {
+		2F2D1F0E20FA062700DD915B /* offer details */ = {
 			isa = PBXGroup;
 			children = (
 				2F2D1F1B20FA064600DD915B /* OfferDetails.storyboard */,
@@ -202,7 +202,7 @@
 				2F2D1F1020FA063800DD915B /* OfferDetailsModels.swift */,
 				2F2D1F1220FA063800DD915B /* OfferDetailsRouter.swift */,
 			);
-			path = offer;
+			path = "offer details";
 			sourceTree = "<group>";
 		};
 		2F2D1F1D20FA0E7100DD915B /* common */ = {

@@ -34,6 +34,7 @@ class OffersViewController: UIViewController {
     
     var offers: [Offer] = []
     
+    var currentSortOptions: Offers.SortOptions?
     var sortComponent: SortViewController?
     
     
@@ -81,6 +82,7 @@ class OffersViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        setInitialSortOptions()
         loadOffers()
     }
     
@@ -96,9 +98,25 @@ class OffersViewController: UIViewController {
     
     // MARK: private methods
     
-    func loadOffers() {
+    private func setInitialSortOptions() {
+        currentSortOptions = Offers.SortOptions(
+            sortBy: .name, sortAscDesc: .ascending
+        )
+    }
+    
+    private func loadOffers() {
         let tempRequest = Offers.LoadOffers.Request()
         interactor?.loadOffers(request: tempRequest)
+    }
+    
+    private func sortData() {
+        offers = offers.sorted {
+            if self.currentSortOptions?.sortAscDesc == .ascending {
+                return $0.name < $1.name
+            } else {
+                return $0.name > $1.name
+            }
+        }
     }
     
     private func showSort() {
@@ -115,6 +133,11 @@ class OffersViewController: UIViewController {
     
     
     // MARK: fileprivate methods
+    
+    fileprivate func refreshTable() {
+        sortData()
+        tableView?.reloadData()
+    }
     
     fileprivate func hideSort() {
         guard sortComponent != nil else {
@@ -167,11 +190,13 @@ extension OffersViewController: SortViewControllerOutput {
     // MARK: SortViewControllerOutput
     
     func sortBySegmentChanged(_ option: SortByOption) {
-        print("SORT CHANGED")
+        currentSortOptions?.sortBy = option
+        refreshTable()
     }
     
     func sortAscDescSegmentChanged(_ option: SortAscDescOption) {
-        print("ASC DESC CHANGED")
+        currentSortOptions?.sortAscDesc = option
+        refreshTable()
     }
     
     func cancelPressed() {
@@ -192,7 +217,7 @@ extension OffersViewController: OffersDisplayLogic {
         }
         
         offers = tempOffers
-        tableView?.reloadData()
+        refreshTable()
         
         spinner?.stopAnimating()
     }

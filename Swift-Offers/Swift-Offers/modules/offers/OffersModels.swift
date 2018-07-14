@@ -14,6 +14,13 @@ import UIKit
 
 enum Offers {
     
+    // MARK: model
+    
+    struct SortOptions {
+        var sortBy: SortByOption
+        var sortAscDesc: SortAscDescOption
+    }
+    
     // MARK: actions
     
     enum LoadOffers {
