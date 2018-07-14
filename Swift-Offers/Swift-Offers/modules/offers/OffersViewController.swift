@@ -34,6 +34,8 @@ class OffersViewController: UIViewController {
     
     var offers: [Offer] = []
     
+    var sortComponent: SortViewController?
+    
     
     
     // MARK: object lifecycle
@@ -84,11 +86,43 @@ class OffersViewController: UIViewController {
     
     
     
+    // MARK: UI Events
+    
+    @IBAction func sortPressed() {
+        showSort()
+    }
+    
+    
+    
     // MARK: private methods
     
     func loadOffers() {
         let tempRequest = Offers.LoadOffers.Request()
         interactor?.loadOffers(request: tempRequest)
+    }
+    
+    private func showSort() {
+        guard sortComponent == nil else {
+            return
+        }
+        
+        sortComponent = SortViewController(nibName: "SortViewController", bundle: nil)
+        sortComponent?.delegate = self
+        sortComponent?.view.frame = CGRect(x: 0.0, y: 0.0, width: self.view.frame.width, height: self.view.frame.height)
+        self.view.addSubview((sortComponent?.view)!)
+    }
+    
+    
+    
+    // MARK: fileprivate methods
+    
+    fileprivate func hideSort() {
+        guard sortComponent != nil else {
+            return
+        }
+        
+        sortComponent?.view.removeFromSuperview()
+        sortComponent = nil
     }
 }
 
@@ -122,6 +156,26 @@ extension OffersViewController: UITableViewDelegate {
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         self.performSegue(withIdentifier: "OfferDetails", sender: nil)
         tableView.deselectRow(at: indexPath, animated: true)
+    }
+}
+
+
+// MARK: -
+
+extension OffersViewController: SortViewControllerOutput {
+    
+    // MARK: SortViewControllerOutput
+    
+    func sortBySegmentChanged(_ option: SortByOption) {
+        print("SORT CHANGED")
+    }
+    
+    func sortAscDescSegmentChanged(_ option: SortAscDescOption) {
+        print("ASC DESC CHANGED")
+    }
+    
+    func cancelPressed() {
+        hideSort()
     }
 }
 

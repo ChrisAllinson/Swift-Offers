@@ -8,6 +8,9 @@
 
 import Foundation
 
+
+// MARK: Offer
+
 struct Offer {
     var id: String
     var name: String
@@ -19,4 +22,17 @@ struct Offer {
 struct OfferError {
     var statusCode: Int
     var message: String
+}
+
+
+
+// MARK: Sort
+
+enum SortByOption {
+    case name, description, price
+}
+
+enum SortAscDescOption {
+    case ascending
+    case descending
 }

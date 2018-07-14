@@ -28,6 +28,8 @@
 		2F2D1F1920FA063800DD915B /* OfferDetailsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2F2D1F1320FA063800DD915B /* OfferDetailsViewController.swift */; };
 		2F2D1F1C20FA064600DD915B /* OfferDetails.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 2F2D1F1B20FA064600DD915B /* OfferDetails.storyboard */; };
 		2F2D1F2020FA0E7F00DD915B /* CommonModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2F2D1F1F20FA0E7F00DD915B /* CommonModels.swift */; };
+		2F2D1F2520FA22EF00DD915B /* SortViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2F2D1F2320FA22EF00DD915B /* SortViewController.swift */; };
+		2F2D1F2620FA22EF00DD915B /* SortViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 2F2D1F2420FA22EF00DD915B /* SortViewController.xib */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -75,6 +77,8 @@
 		2F2D1F1320FA063800DD915B /* OfferDetailsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OfferDetailsViewController.swift; sourceTree = "<group>"; };
 		2F2D1F1B20FA064600DD915B /* OfferDetails.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = OfferDetails.storyboard; sourceTree = "<group>"; };
 		2F2D1F1F20FA0E7F00DD915B /* CommonModels.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CommonModels.swift; sourceTree = "<group>"; };
+		2F2D1F2320FA22EF00DD915B /* SortViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SortViewController.swift; sourceTree = "<group>"; };
+		2F2D1F2420FA22EF00DD915B /* SortViewController.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = SortViewController.xib; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -174,6 +178,8 @@
 				2F2D1EFE20F97F9F00DD915B /* OffersModels.swift */,
 				2F2D1F0020F97F9F00DD915B /* OffersRouter.swift */,
 				2F2D1F0B20F9FFF900DD915B /* cell */,
+				2F2D1F2120FA22C500DD915B /* sort */,
+				2F2D1F2220FA22C500DD915B /* filter */,
 			);
 			path = offers;
 			sourceTree = "<group>";
@@ -213,6 +219,22 @@
 				2F2D1F1F20FA0E7F00DD915B /* CommonModels.swift */,
 			);
 			path = models;
+			sourceTree = "<group>";
+		};
+		2F2D1F2120FA22C500DD915B /* sort */ = {
+			isa = PBXGroup;
+			children = (
+				2F2D1F2320FA22EF00DD915B /* SortViewController.swift */,
+				2F2D1F2420FA22EF00DD915B /* SortViewController.xib */,
+			);
+			path = sort;
+			sourceTree = "<group>";
+		};
+		2F2D1F2220FA22C500DD915B /* filter */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = filter;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -322,6 +344,7 @@
 				2F2D1F0A20F97FCE00DD915B /* Offers.storyboard in Resources */,
 				2F2D1F1C20FA064600DD915B /* OfferDetails.storyboard in Resources */,
 				2F2D1ED820F97F3100DD915B /* LaunchScreen.storyboard in Resources */,
+				2F2D1F2620FA22EF00DD915B /* SortViewController.xib in Resources */,
 				2F2D1ED520F97F3100DD915B /* Assets.xcassets in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -357,6 +380,7 @@
 				2F2D1F1820FA063800DD915B /* OfferDetailsRouter.swift in Sources */,
 				2F2D1F0520F97F9F00DD915B /* OffersPresenter.swift in Sources */,
 				2F2D1F2020FA0E7F00DD915B /* CommonModels.swift in Sources */,
+				2F2D1F2520FA22EF00DD915B /* SortViewController.swift in Sources */,
 				2F2D1F0720F97F9F00DD915B /* OffersViewController.swift in Sources */,
 				2F2D1ECB20F97F2E00DD915B /* AppDelegate.swift in Sources */,
 				2F2D1F1720FA063800DD915B /* OfferDetailsPresenter.swift in Sources */,

@@ -27,6 +27,8 @@ class OfferDetailsViewController: UIViewController {
     var interactor: OfferDetailsBusinessLogic?
     var router: (NSObjectProtocol & OfferDetailsRoutingLogic & OfferDetailsDataPassing)?
     
+    @IBOutlet var navItem: UINavigationItem?
+    
     @IBOutlet var offerImage: UIImageView?
     @IBOutlet var nameLabel: UILabel?
     @IBOutlet var descriptionLabel: UILabel?
@@ -98,6 +100,8 @@ extension OfferDetailsViewController: OfferDetailsDisplayLogic {
     // MARK: OfferDisplayLogic
     
     func displayOffer(viewModel: OfferDetails.LoadOffer.ViewModel) {
+        navItem?.title = viewModel.offer.name
+        
         nameLabel?.text = viewModel.offer.name
         descriptionLabel?.text = viewModel.offer.description
         priceLabel?.text = "$\(viewModel.offer.price)"
