@@ -33,9 +33,13 @@ class OffersViewController: UIViewController {
     @IBOutlet var segue: UIStoryboardSegue?
     
     var offers: [Offer] = []
+    var filteredOffers: [Offer] = []
     
     var currentSortOptions: Offers.SortOptions?
     var sortComponent: SortViewController?
+    
+    var currentFilterOptions: Offers.FilterOptions?
+    var filterComponent: FilterViewController?
     
     
     
@@ -83,6 +87,7 @@ class OffersViewController: UIViewController {
         super.viewDidLoad()
         
         setInitialSortOptions()
+        setInitialFilterOptions()
         loadOffers()
     }
     
@@ -92,6 +97,10 @@ class OffersViewController: UIViewController {
     
     @IBAction func sortPressed() {
         showSort()
+    }
+    
+    @IBAction func filterPressed() {
+        showFilter()
     }
     
     
@@ -104,17 +113,61 @@ class OffersViewController: UIViewController {
         )
     }
     
+    private func setInitialFilterOptions() {
+        currentFilterOptions = Offers.FilterOptions(
+            filterBy: .name, filterText: ""
+        )
+    }
+    
     private func loadOffers() {
         let tempRequest = Offers.LoadOffers.Request()
         interactor?.loadOffers(request: tempRequest)
     }
     
+    private func filterData() {
+        guard let filterBy = self.currentFilterOptions?.filterBy else {
+            filteredOffers = offers
+            return
+        }
+        guard let filterText = self.currentFilterOptions?.filterText, filterText != "" else {
+            filteredOffers = offers
+            return
+        }
+        
+        filteredOffers = offers.filter {
+            switch filterBy {
+                case .name:
+                    return $0.name.contains(filterText)
+                case .description:
+                    return $0.description!.contains(filterText)
+                case .price:
+                    let priceString = "\($0.price)"
+                    return priceString.contains(filterText)
+            }
+        }
+    }
+    
     private func sortData() {
-        offers = offers.sorted {
-            if self.currentSortOptions?.sortAscDesc == .ascending {
-                return $0.name < $1.name
-            } else {
-                return $0.name > $1.name
+        filteredOffers.sort {
+            switch (self.currentSortOptions?.sortBy)! {
+                case .name:
+                    if self.currentSortOptions?.sortAscDesc == .ascending {
+                        return $0.name < $1.name
+                    } else {
+                        return $0.name > $1.name
+                    }
+                case .description:
+                    if self.currentSortOptions?.sortAscDesc == .ascending {
+                        return $0.description ?? "" < $1.description ?? ""
+                    } else {
+                        return $0.description ?? "" > $1.description ?? ""
+                    }
+                case .price:
+                    if self.currentSortOptions?.sortAscDesc == .ascending {
+                        return $0.price < $1.price
+                    } else {
+                        return $0.price > $1.price
+                    }
             }
         }
     }
@@ -130,11 +183,23 @@ class OffersViewController: UIViewController {
         self.view.addSubview((sortComponent?.view)!)
     }
     
+    private func showFilter() {
+        guard filterComponent == nil else {
+            return
+        }
+        
+        filterComponent = FilterViewController(nibName: "FilterViewController", bundle: nil)
+        filterComponent?.delegate = self
+        filterComponent?.view.frame = CGRect(x: 0.0, y: 0.0, width: self.view.frame.width, height: self.view.frame.height)
+        self.view.addSubview((filterComponent?.view)!)
+    }
+    
     
     
     // MARK: fileprivate methods
     
     fileprivate func refreshTable() {
+        filterData()
         sortData()
         tableView?.reloadData()
     }
@@ -147,6 +212,15 @@ class OffersViewController: UIViewController {
         sortComponent?.view.removeFromSuperview()
         sortComponent = nil
     }
+    
+    fileprivate func hideFilter() {
+        guard filterComponent != nil else {
+            return
+        }
+        
+        filterComponent?.view.removeFromSuperview()
+        filterComponent = nil
+    }
 }
 
 
@@ -155,14 +229,14 @@ class OffersViewController: UIViewController {
 extension OffersViewController: UITableViewDataSource {
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return offers.count
+        return filteredOffers.count
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         if let cell = tableView.dequeueReusableCell(withIdentifier: "OfferCell", for: indexPath) as? OfferTableViewCell {
-            cell.nameLabel?.text = offers[indexPath.row].name
-            cell.descriptionLabel?.text = offers[indexPath.row].description
-            cell.priceLabel?.text = "$\(offers[indexPath.row].price)"
+            cell.nameLabel?.text = filteredOffers[indexPath.row].name
+            cell.descriptionLabel?.text = filteredOffers[indexPath.row].description
+            cell.priceLabel?.text = "$\(filteredOffers[indexPath.row].price)"
             return cell
         }
         return UITableViewCell()
@@ -199,8 +273,30 @@ extension OffersViewController: SortViewControllerOutput {
         refreshTable()
     }
     
-    func cancelPressed() {
+    func sortCancelPressed() {
         hideSort()
+    }
+}
+
+
+// MARK: -
+
+extension OffersViewController: FilterViewControllerOutput {
+    
+    // MARK: FilterViewControllerOutput
+    
+    func filterBySegmentChanged(_ option: SortByOption) {
+        currentFilterOptions?.filterBy = option
+        refreshTable()
+    }
+    
+    func filterTextfieldChanged(_ option: String) {
+        currentFilterOptions?.filterText = option
+        refreshTable()
+    }
+    
+    func filterCancelPressed() {
+        hideFilter()
     }
 }
 

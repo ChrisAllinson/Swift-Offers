@@ -17,8 +17,13 @@ enum Offers {
     // MARK: model
     
     struct SortOptions {
-        var sortBy: SortByOption
-        var sortAscDesc: SortAscDescOption
+        var sortBy: SortByOption?
+        var sortAscDesc: SortAscDescOption?
+    }
+    
+    struct FilterOptions {
+        var filterBy: SortByOption?
+        var filterText: String?
     }
     
     // MARK: actions

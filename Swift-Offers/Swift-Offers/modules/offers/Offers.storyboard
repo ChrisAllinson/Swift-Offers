@@ -146,7 +146,11 @@
                                 <action selector="sortPressed" destination="Kzg-6D-wFO" id="vMZ-tF-avo"/>
                             </connections>
                         </barButtonItem>
-                        <barButtonItem key="rightBarButtonItem" title="Filter" id="k0Z-2y-u6U"/>
+                        <barButtonItem key="rightBarButtonItem" title="Filter" id="k0Z-2y-u6U">
+                            <connections>
+                                <action selector="filterPressed" destination="Kzg-6D-wFO" id="irc-BC-JfZ"/>
+                            </connections>
+                        </barButtonItem>
                     </navigationItem>
                     <connections>
                         <outlet property="spinner" destination="6vR-qY-mEs" id="eGf-zi-0dF"/>

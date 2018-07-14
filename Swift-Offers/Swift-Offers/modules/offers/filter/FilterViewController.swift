@@ -1,5 +1,5 @@
 //
-//  SortViewController.swift
+//  FilterViewController.swift
 //  Swift-Offers
 //
 //  Created by Chris Allinson on 2018-07-14.
@@ -9,25 +9,24 @@
 import UIKit
 
 
-protocol SortViewControllerOutput: class {
-    func sortBySegmentChanged(_ option: SortByOption)
-    func sortAscDescSegmentChanged(_ option: SortAscDescOption)
-    func sortCancelPressed()
+protocol FilterViewControllerOutput: class {
+    func filterBySegmentChanged(_ option: SortByOption)
+    func filterTextfieldChanged(_ option: String)
+    func filterCancelPressed()
 }
 
 
 // MARK: -
 
-class SortViewController: UIViewController {
+class FilterViewController: UIViewController {
     
     // MARK: instance variables
     
-    weak var delegate: SortViewControllerOutput?
+    weak var delegate: FilterViewControllerOutput?
     
     var tapGesture: UITapGestureRecognizer?
     
-    @IBOutlet var sortBySegment: UISegmentedControl?
-    @IBOutlet var ascDescSegment: UISegmentedControl?
+    @IBOutlet var filterTextTextfield: UITextField?
     
     
     
@@ -39,7 +38,7 @@ class SortViewController: UIViewController {
         tapGesture = UITapGestureRecognizer.init(target: self, action: #selector(viewTapped))
         self.view.addGestureRecognizer(tapGesture!)
     }
-
+    
     deinit {
         tapGesture?.removeTarget(self, action: #selector(viewTapped))
     }
@@ -48,24 +47,19 @@ class SortViewController: UIViewController {
     
     // MARK: UI Events
     
-    @IBAction func sortBySegmentChanged(sender: UISegmentedControl) {
+    @IBAction func filterBySegmentChanged(sender: UISegmentedControl) {
         switch sender.selectedSegmentIndex {
             case 0:
-                delegate?.sortBySegmentChanged(.name)
+                delegate?.filterBySegmentChanged(.name)
             case 1:
-                delegate?.sortBySegmentChanged(.description)
+                delegate?.filterBySegmentChanged(.description)
             default:
-                delegate?.sortBySegmentChanged(.price)
+                delegate?.filterBySegmentChanged(.price)
         }
     }
     
-    @IBAction func sortAscDescSegmentChanged(sender: UISegmentedControl) {
-        switch sender.selectedSegmentIndex {
-            case 0:
-                delegate?.sortAscDescSegmentChanged(.ascending)
-            default:
-                delegate?.sortAscDescSegmentChanged(.descending)
-        }
+    @IBAction func textFieldEditingChanged(_ sender: Any) {
+        delegate?.filterTextfieldChanged((sender as! UITextField).text!)
     }
     
     
@@ -79,6 +73,6 @@ class SortViewController: UIViewController {
             return
         }
         
-        delegate?.sortCancelPressed()
+        delegate?.filterCancelPressed()
     }
 }
