@@ -40,5 +40,33 @@ enum Offers {
             var error: OfferError?
         }
     }
+    
+    enum FilterOffers {
+        struct Request {
+            var filterOptions: FilterOptions
+        }
+        struct Response {
+            var offers: [Offer]?
+            var error: OfferError?
+        }
+        struct ViewModel {
+            var offers: [Offer]?
+            var error: OfferError?
+        }
+    }
+    
+    enum SortOffers {
+        struct Request {
+            var sortOptions: SortOptions
+        }
+        struct Response {
+            var offers: [Offer]?
+            var error: OfferError?
+        }
+        struct ViewModel {
+            var offers: [Offer]?
+            var error: OfferError?
+        }
+    }
 }
 

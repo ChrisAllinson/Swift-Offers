@@ -15,6 +15,8 @@ import UIKit
 
 protocol OffersWorkerInput {
     func fetchOffers(completion: (_ offers: [Offer]?, _ error: OfferError?) -> ())
+    func sortOffers(offers: [Offer], sortOptions: Offers.SortOptions, completion: @escaping (_ sortedOffers: [Offer]) -> Void)
+    func filterOffers(offers: [Offer], filterOptions: Offers.FilterOptions, completion: @escaping (_ filteredOffers: [Offer]) -> Void)
 }
 
 
@@ -39,5 +41,66 @@ class OffersWorker: OffersWorkerInput {
             ],
             nil
         )
+    }
+    
+    func filterOffers(offers: [Offer], filterOptions: Offers.FilterOptions, completion: @escaping (_ filteredOffers: [Offer]) -> Void) {
+        guard let filterBy = filterOptions.filterBy else {
+            completion(offers)
+            return
+        }
+        guard let filterText = filterOptions.filterText, filterText != "" else {
+            completion(offers)
+            return
+        }
+        
+        var filteredOffers: [Offer] = []
+        DispatchQueue.global(qos: .background).async {
+            filteredOffers = offers.filter {
+                switch filterBy {
+                    case .name:
+                        return $0.name.contains(filterText)
+                    case .description:
+                        return $0.description!.contains(filterText)
+                    case .price:
+                        let priceString = "\($0.price)"
+                        return priceString.contains(filterText)
+                }
+            }
+            
+            DispatchQueue.main.async {
+                completion(filteredOffers)
+            }
+        }
+    }
+    
+    func sortOffers(offers: [Offer], sortOptions: Offers.SortOptions, completion: @escaping (_ sortedOffers: [Offer]) -> Void) {
+        DispatchQueue.global(qos: .background).async {
+            let sortedOffers = offers.sorted {
+                switch (sortOptions.sortBy)! {
+                case .name:
+                    if sortOptions.sortAscDesc == .ascending {
+                        return $0.name < $1.name
+                    } else {
+                        return $0.name > $1.name
+                    }
+                case .description:
+                    if sortOptions.sortAscDesc == .ascending {
+                        return $0.description ?? "" < $1.description ?? ""
+                    } else {
+                        return $0.description ?? "" > $1.description ?? ""
+                    }
+                case .price:
+                    if sortOptions.sortAscDesc == .ascending {
+                        return $0.price < $1.price
+                    } else {
+                        return $0.price > $1.price
+                    }
+                }
+            }
+            
+            DispatchQueue.main.async {
+                completion(sortedOffers)
+            }
+        }
     }
 }

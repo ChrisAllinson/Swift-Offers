@@ -16,6 +16,13 @@ import UIKit
 protocol OffersDisplayLogic: class {
     func displayOffers(viewModel: Offers.LoadOffers.ViewModel)
     func displayError(viewModel: Offers.LoadOffers.ViewModel)
+    
+    func displayOffers(viewModel: Offers.FilterOffers.ViewModel)
+    func displayError(viewModel: Offers.FilterOffers.ViewModel)
+    
+    func displayOffers(viewModel: Offers.SortOffers.ViewModel)
+    func displayError(viewModel: Offers.SortOffers.ViewModel)
+    
 }
 
 
@@ -30,10 +37,8 @@ class OffersViewController: UIViewController {
     
     @IBOutlet var tableView: UITableView?
     @IBOutlet var spinner: UIActivityIndicatorView?
-    @IBOutlet var segue: UIStoryboardSegue?
     
     var offers: [Offer] = []
-    var filteredOffers: [Offer] = []
     
     var currentSortOptions: Offers.SortOptions?
     var sortComponent: SortViewController?
@@ -125,51 +130,13 @@ class OffersViewController: UIViewController {
     }
     
     private func filterData() {
-        guard let filterBy = self.currentFilterOptions?.filterBy else {
-            filteredOffers = offers
-            return
-        }
-        guard let filterText = self.currentFilterOptions?.filterText, filterText != "" else {
-            filteredOffers = offers
-            return
-        }
-        
-        filteredOffers = offers.filter {
-            switch filterBy {
-                case .name:
-                    return $0.name.contains(filterText)
-                case .description:
-                    return $0.description!.contains(filterText)
-                case .price:
-                    let priceString = "\($0.price)"
-                    return priceString.contains(filterText)
-            }
-        }
+        let tempRequest = Offers.FilterOffers.Request(filterOptions: currentFilterOptions!)
+        interactor?.filterOffers(request: tempRequest)
     }
     
     private func sortData() {
-        filteredOffers.sort {
-            switch (self.currentSortOptions?.sortBy)! {
-                case .name:
-                    if self.currentSortOptions?.sortAscDesc == .ascending {
-                        return $0.name < $1.name
-                    } else {
-                        return $0.name > $1.name
-                    }
-                case .description:
-                    if self.currentSortOptions?.sortAscDesc == .ascending {
-                        return $0.description ?? "" < $1.description ?? ""
-                    } else {
-                        return $0.description ?? "" > $1.description ?? ""
-                    }
-                case .price:
-                    if self.currentSortOptions?.sortAscDesc == .ascending {
-                        return $0.price < $1.price
-                    } else {
-                        return $0.price > $1.price
-                    }
-            }
-        }
+        let tempRequest = Offers.SortOffers.Request(sortOptions: currentSortOptions!)
+        interactor?.sortOffers(request: tempRequest)
     }
     
     private func showSort() {
@@ -198,12 +165,6 @@ class OffersViewController: UIViewController {
     
     // MARK: fileprivate methods
     
-    fileprivate func refreshTable() {
-        filterData()
-        sortData()
-        tableView?.reloadData()
-    }
-    
     fileprivate func hideSort() {
         guard sortComponent != nil else {
             return
@@ -229,14 +190,14 @@ class OffersViewController: UIViewController {
 extension OffersViewController: UITableViewDataSource {
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return filteredOffers.count
+        return offers.count
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         if let cell = tableView.dequeueReusableCell(withIdentifier: "OfferCell", for: indexPath) as? OfferTableViewCell {
-            cell.nameLabel?.text = filteredOffers[indexPath.row].name
-            cell.descriptionLabel?.text = filteredOffers[indexPath.row].description
-            cell.priceLabel?.text = "$\(filteredOffers[indexPath.row].price)"
+            cell.nameLabel?.text = offers[indexPath.row].name
+            cell.descriptionLabel?.text = offers[indexPath.row].description
+            cell.priceLabel?.text = "$\(offers[indexPath.row].price)"
             return cell
         }
         return UITableViewCell()
@@ -265,12 +226,12 @@ extension OffersViewController: SortViewControllerOutput {
     
     func sortBySegmentChanged(_ option: SortByOption) {
         currentSortOptions?.sortBy = option
-        refreshTable()
+        filterData()
     }
     
     func sortAscDescSegmentChanged(_ option: SortAscDescOption) {
         currentSortOptions?.sortAscDesc = option
-        refreshTable()
+        filterData()
     }
     
     func sortCancelPressed() {
@@ -287,12 +248,12 @@ extension OffersViewController: FilterViewControllerOutput {
     
     func filterBySegmentChanged(_ option: SortByOption) {
         currentFilterOptions?.filterBy = option
-        refreshTable()
+        filterData()
     }
     
     func filterTextfieldChanged(_ option: String) {
         currentFilterOptions?.filterText = option
-        refreshTable()
+        filterData()
     }
     
     func filterCancelPressed() {
@@ -313,12 +274,40 @@ extension OffersViewController: OffersDisplayLogic {
         }
         
         offers = tempOffers
-        refreshTable()
+        filterData()
+    }
+    
+    func displayError(viewModel: Offers.LoadOffers.ViewModel) {
+        //
+    }
+    
+    func displayOffers(viewModel: Offers.FilterOffers.ViewModel) {
+        guard let tempOffers = viewModel.offers else {
+            return
+        }
+        
+        offers = tempOffers
+        
+        sortData()
+    }
+    
+    func displayError(viewModel: Offers.FilterOffers.ViewModel) {
+        //
+    }
+    
+    func displayOffers(viewModel: Offers.SortOffers.ViewModel) {
+        guard let tempOffers = viewModel.offers else {
+            return
+        }
+        
+        offers = tempOffers
+        
+        tableView?.reloadData()
         
         spinner?.stopAnimating()
     }
     
-    func displayError(viewModel: Offers.LoadOffers.ViewModel) {
+    func displayError(viewModel: Offers.SortOffers.ViewModel) {
         //
     }
 }

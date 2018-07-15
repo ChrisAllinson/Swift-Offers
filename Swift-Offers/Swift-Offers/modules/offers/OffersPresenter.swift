@@ -15,6 +15,8 @@ import UIKit
 
 protocol OffersPresentationLogic {
     func presentOffers(response: Offers.LoadOffers.Response)
+    func presentSortedOffers(response: Offers.SortOffers.Response)
+    func presentFilteredOffers(response: Offers.FilterOffers.Response)
 }
 
 
@@ -45,6 +47,40 @@ extension OffersPresenter: OffersPresentationLogic {
         }
         
         let viewModel = Offers.LoadOffers.ViewModel(
+            offers: response.offers,
+            error: nil
+        )
+        viewController?.displayOffers(viewModel: viewModel)
+    }
+    
+    func presentSortedOffers(response: Offers.SortOffers.Response) {
+        guard response.error == nil else {
+            let viewModel = Offers.SortOffers.ViewModel(
+                offers: nil,
+                error: response.error
+            )
+            viewController?.displayError(viewModel: viewModel)
+            return
+        }
+    
+        let viewModel = Offers.SortOffers.ViewModel(
+            offers: response.offers,
+            error: nil
+        )
+        viewController?.displayOffers(viewModel: viewModel)
+    }
+
+    func presentFilteredOffers(response: Offers.FilterOffers.Response) {
+        guard response.error == nil else {
+            let viewModel = Offers.LoadOffers.ViewModel(
+                offers: nil,
+                error: response.error
+            )
+            viewController?.displayError(viewModel: viewModel)
+            return
+        }
+        
+        let viewModel = Offers.FilterOffers.ViewModel(
             offers: response.offers,
             error: nil
         )
