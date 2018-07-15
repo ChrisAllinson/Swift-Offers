@@ -27,20 +27,26 @@ class OffersWorker: OffersWorkerInput {
     // MARK: OffersWorkerInput
     
     func fetchOffers(completion: (_ offers: [Offer]?, _ error: OfferError?) -> ()) {
-        completion(
-            [
-                Offer(id: "ABCD", name: "Offer 1", price: 9.99, imageUrl: nil, description: "description description description description description description description description"),
-                Offer(id: "EFGH", name: "Offer 2", price: 8.99, imageUrl: nil, description: "description description description description description description description description"),
-                Offer(id: "IJKL", name: "Offer 3", price: 7.99, imageUrl: nil, description: "description description description description description description description description"),
-                Offer(id: "MNOP", name: "Offer 4", price: 6.99, imageUrl: nil, description: "description description description description description description description description"),
-                Offer(id: "QRST", name: "Offer 5", price: 5.99, imageUrl: nil, description: "description description description description description description description description"),
-                Offer(id: "UVWX", name: "Offer 6", price: 4.99, imageUrl: nil, description: "description description description description description description description description"),
-                Offer(id: "YZAB", name: "Offer 7", price: 3.99, imageUrl: nil, description: "description description description description description description description description"),
-                Offer(id: "CDEF", name: "Offer 8", price: 2.99, imageUrl: nil, description: "description description description description description description description description"),
-                Offer(id: "GHIJ", name: "Offer 9", price: 1.99, imageUrl: nil, description: "description description description description description description description description")
-            ],
-            nil
-        )
+        var tempArray: [Offer] = []
+        for i in 0...10000 {
+            tempArray.append(Offer(id: "ABCD", name: "Offer \(i)", price: Double(i), imageUrl: nil, description: "description description description description description description description description"))
+        }
+        completion(tempArray, nil)
+        
+//        completion(
+//            [
+//                Offer(id: "ABCD", name: "Offer 1", price: 9.99, imageUrl: nil, description: "description description description description description description description description"),
+//                Offer(id: "EFGH", name: "Offer 2", price: 8.99, imageUrl: nil, description: "description description description description description description description description"),
+//                Offer(id: "IJKL", name: "Offer 3", price: 7.99, imageUrl: nil, description: "description description description description description description description description"),
+//                Offer(id: "MNOP", name: "Offer 4", price: 6.99, imageUrl: nil, description: "description description description description description description description description"),
+//                Offer(id: "QRST", name: "Offer 5", price: 5.99, imageUrl: nil, description: "description description description description description description description description"),
+//                Offer(id: "UVWX", name: "Offer 6", price: 4.99, imageUrl: nil, description: "description description description description description description description description"),
+//                Offer(id: "YZAB", name: "Offer 7", price: 3.99, imageUrl: nil, description: "description description description description description description description description"),
+//                Offer(id: "CDEF", name: "Offer 8", price: 2.99, imageUrl: nil, description: "description description description description description description description description"),
+//                Offer(id: "GHIJ", name: "Offer 9", price: 1.99, imageUrl: nil, description: "description description description description description description description description")
+//            ],
+//            nil
+//        )
     }
     
     func filterOffers(offers: [Offer], filterOptions: Offers.FilterOptions, completion: @escaping (_ filteredOffers: [Offer]) -> Void) {

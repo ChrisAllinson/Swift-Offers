@@ -84,11 +84,25 @@ class OfferDetailsViewController: UIViewController {
     
     
     
-    // MARK: do something
+    // MARK: private methods
     
-    func loadOffer() {
+    private func loadOffer() {
         let request = OfferDetails.LoadOffer.Request()
         interactor?.loadOffer(request: request)
+    }
+    
+    
+    
+    // MARK: fileprivate methods
+    
+    fileprivate func lazyLoadImage() {
+        let tempUrl = URL(string: "http://www.allinson.ca/libs/allinson-styleguide/global/images/logo/logo.png")!
+        URLSession.shared.dataTask(with: tempUrl) { ( data, response, error) in
+            DispatchQueue.main.async {
+                let tempImage = UIImage(data: data!)
+                self.offerImage?.image = tempImage
+            }
+        }.resume()
     }
 }
 
@@ -105,5 +119,7 @@ extension OfferDetailsViewController: OfferDetailsDisplayLogic {
         nameLabel?.text = viewModel.offer.name
         descriptionLabel?.text = viewModel.offer.description
         priceLabel?.text = "$\(viewModel.offer.price)"
+        
+        lazyLoadImage()
     }
 }

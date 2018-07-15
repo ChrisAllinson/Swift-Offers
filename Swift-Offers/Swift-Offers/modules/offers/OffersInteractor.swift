@@ -76,6 +76,8 @@ extension OffersInteractor: OffersBusinessLogic {
     func sortOffers(request: Offers.SortOffers.Request) {
         worker = OffersWorker()
         worker?.sortOffers(offers: filteredOffers, sortOptions: request.sortOptions) { offers in
+            self.filteredOffers = offers
+            
             let tempResponse = Offers.SortOffers.Response(
                 offers: offers,
                 error: nil
