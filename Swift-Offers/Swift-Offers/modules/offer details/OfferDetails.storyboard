@@ -10,7 +10,7 @@
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <scenes>
-        <!--Offer Details View Controller-->
+        <!--Offer-->
         <scene sceneID="xYT-Sg-HZ5">
             <objects>
                 <viewController storyboardIdentifier="OfferDetailsViewController" id="2q4-tw-pYO" customClass="OfferDetailsViewController" customModule="Swift_Offers" customModuleProvider="target" sceneMemberID="viewController">
@@ -40,7 +40,7 @@
                                 <nil key="textColor"/>
                                 <nil key="highlightedColor"/>
                             </label>
-                            <imageView userInteractionEnabled="NO" contentMode="scaleAspectFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="tp7-PC-u9c">
+                            <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="tp7-PC-u9c">
                                 <rect key="frame" x="0.0" y="0.0" width="375" height="200"/>
                                 <constraints>
                                     <constraint firstAttribute="height" constant="200" id="vAr-YR-eX3"/>
@@ -79,10 +79,14 @@
                         <viewLayoutGuide key="safeArea" id="TwP-Dd-gOa"/>
                     </view>
                     <extendedEdge key="edgesForExtendedLayout"/>
-                    <simulatedNavigationBarMetrics key="simulatedTopBarMetrics" translucent="NO" prompted="NO"/>
+                    <navigationItem key="navigationItem" title="Offer" id="gC5-X0-mnw">
+                        <barButtonItem key="backBarButtonItem" title="Offers" id="STE-Lg-YOX"/>
+                    </navigationItem>
+                    <simulatedNavigationBarMetrics key="simulatedTopBarMetrics" prompted="NO"/>
                     <connections>
                         <outlet property="descriptionLabel" destination="wws-7P-OJO" id="7jj-WD-cqH"/>
                         <outlet property="nameLabel" destination="Ijd-gt-cEx" id="8cG-Cu-L2w"/>
+                        <outlet property="navItem" destination="gC5-X0-mnw" id="5GY-4m-z5x"/>
                         <outlet property="offerImage" destination="tp7-PC-u9c" id="zPr-oE-Q4C"/>
                         <outlet property="priceLabel" destination="bqN-8u-yRo" id="vh0-wK-fiY"/>
                     </connections>

@@ -63,7 +63,7 @@ class OffersRouter: NSObject, OffersRoutingLogic, OffersDataPassing {
     
     func passDataToOffer(source: OffersDataStore, destination: inout OfferDetailsDataStore) {
         if let selectedIndex = viewController?.tableView?.indexPathForSelectedRow?.row {
-            destination.offer = source.offers[selectedIndex]
+            destination.offer = source.filteredOffers[selectedIndex]
         }
     }
 }

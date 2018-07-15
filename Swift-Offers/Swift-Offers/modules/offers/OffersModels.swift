@@ -14,10 +14,50 @@ import UIKit
 
 enum Offers {
     
+    // MARK: model
+    
+    struct SortOptions {
+        var sortBy: SortByOption?
+        var sortAscDesc: SortAscDescOption?
+    }
+    
+    struct FilterOptions {
+        var filterBy: SortByOption?
+        var filterText: String?
+    }
+    
     // MARK: actions
     
     enum LoadOffers {
         struct Request {
+        }
+        struct Response {
+            var offers: [Offer]?
+            var error: OfferError?
+        }
+        struct ViewModel {
+            var offers: [Offer]?
+            var error: OfferError?
+        }
+    }
+    
+    enum FilterOffers {
+        struct Request {
+            var filterOptions: FilterOptions
+        }
+        struct Response {
+            var offers: [Offer]?
+            var error: OfferError?
+        }
+        struct ViewModel {
+            var offers: [Offer]?
+            var error: OfferError?
+        }
+    }
+    
+    enum SortOffers {
+        struct Request {
+            var sortOptions: SortOptions
         }
         struct Response {
             var offers: [Offer]?

@@ -15,6 +15,8 @@ import UIKit
 
 protocol OffersWorkerInput {
     func fetchOffers(completion: (_ offers: [Offer]?, _ error: OfferError?) -> ())
+    func sortOffers(offers: [Offer], sortOptions: Offers.SortOptions, completion: @escaping (_ sortedOffers: [Offer]) -> Void)
+    func filterOffers(offers: [Offer], filterOptions: Offers.FilterOptions, completion: @escaping (_ filteredOffers: [Offer]) -> Void)
 }
 
 
@@ -22,21 +24,89 @@ protocol OffersWorkerInput {
 
 class OffersWorker: OffersWorkerInput {
     
+    // MARK: OffersWorkerInput
+    
     func fetchOffers(completion: (_ offers: [Offer]?, _ error: OfferError?) -> ()) {
-        completion(
-            [
-                Offer(id: "ABCD", name: "Offer 1", price: 1.99, imageUrl: nil, description: "description description description description description description description description"),
-                Offer(id: "EFGH", name: "Offer 2", price: 2.99, imageUrl: nil, description: "description description description description description description description description"),
-                Offer(id: "IJKL", name: "Offer 3", price: 3.99, imageUrl: nil, description: "description description description description description description description description"),
-                Offer(id: "MNOP", name: "Offer 4", price: 4.99, imageUrl: nil, description: "description description description description description description description description"),
-                Offer(id: "QRST", name: "Offer 5", price: 5.99, imageUrl: nil, description: "description description description description description description description description"),
-                Offer(id: "UVWX", name: "Offer 6", price: 6.99, imageUrl: nil, description: "description description description description description description description description"),
-                Offer(id: "YZAB", name: "Offer 7", price: 7.99, imageUrl: nil, description: "description description description description description description description description"),
-                Offer(id: "CDEF", name: "Offer 8", price: 8.99, imageUrl: nil, description: "description description description description description description description description"),
-                Offer(id: "GHIJ", name: "Offer 9", price: 9.99, imageUrl: nil, description: "description description description description description description description description"),
-                Offer(id: "KLMN", name: "Offer 10", price: 10.99, imageUrl: nil, description: "description description description description description description description description")
-            ],
-            nil
-        )
+        var tempArray: [Offer] = []
+        for i in 0...10000 {
+            tempArray.append(Offer(id: "ABCD", name: "Offer \(i)", price: Double(i), imageUrl: nil, description: "description description description description description description description description"))
+        }
+        completion(tempArray, nil)
+        
+//        completion(
+//            [
+//                Offer(id: "ABCD", name: "Offer 1", price: 9.99, imageUrl: nil, description: "description description description description description description description description"),
+//                Offer(id: "EFGH", name: "Offer 2", price: 8.99, imageUrl: nil, description: "description description description description description description description description"),
+//                Offer(id: "IJKL", name: "Offer 3", price: 7.99, imageUrl: nil, description: "description description description description description description description description"),
+//                Offer(id: "MNOP", name: "Offer 4", price: 6.99, imageUrl: nil, description: "description description description description description description description description"),
+//                Offer(id: "QRST", name: "Offer 5", price: 5.99, imageUrl: nil, description: "description description description description description description description description"),
+//                Offer(id: "UVWX", name: "Offer 6", price: 4.99, imageUrl: nil, description: "description description description description description description description description"),
+//                Offer(id: "YZAB", name: "Offer 7", price: 3.99, imageUrl: nil, description: "description description description description description description description description"),
+//                Offer(id: "CDEF", name: "Offer 8", price: 2.99, imageUrl: nil, description: "description description description description description description description description"),
+//                Offer(id: "GHIJ", name: "Offer 9", price: 1.99, imageUrl: nil, description: "description description description description description description description description")
+//            ],
+//            nil
+//        )
+    }
+    
+    func filterOffers(offers: [Offer], filterOptions: Offers.FilterOptions, completion: @escaping (_ filteredOffers: [Offer]) -> Void) {
+        guard let filterBy = filterOptions.filterBy else {
+            completion(offers)
+            return
+        }
+        guard let filterText = filterOptions.filterText, filterText != "" else {
+            completion(offers)
+            return
+        }
+        
+        var filteredOffers: [Offer] = []
+        DispatchQueue.global(qos: .background).async {
+            filteredOffers = offers.filter {
+                switch filterBy {
+                    case .name:
+                        return $0.name.contains(filterText)
+                    case .description:
+                        return $0.description!.contains(filterText)
+                    case .price:
+                        let priceString = "\($0.price)"
+                        return priceString.contains(filterText)
+                }
+            }
+            
+            DispatchQueue.main.async {
+                completion(filteredOffers)
+            }
+        }
+    }
+    
+    func sortOffers(offers: [Offer], sortOptions: Offers.SortOptions, completion: @escaping (_ sortedOffers: [Offer]) -> Void) {
+        DispatchQueue.global(qos: .background).async {
+            let sortedOffers = offers.sorted {
+                switch (sortOptions.sortBy)! {
+                case .name:
+                    if sortOptions.sortAscDesc == .ascending {
+                        return $0.name < $1.name
+                    } else {
+                        return $0.name > $1.name
+                    }
+                case .description:
+                    if sortOptions.sortAscDesc == .ascending {
+                        return $0.description ?? "" < $1.description ?? ""
+                    } else {
+                        return $0.description ?? "" > $1.description ?? ""
+                    }
+                case .price:
+                    if sortOptions.sortAscDesc == .ascending {
+                        return $0.price < $1.price
+                    } else {
+                        return $0.price > $1.price
+                    }
+                }
+            }
+            
+            DispatchQueue.main.async {
+                completion(sortedOffers)
+            }
+        }
     }
 }

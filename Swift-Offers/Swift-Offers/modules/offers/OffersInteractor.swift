@@ -15,10 +15,13 @@ import UIKit
 
 protocol OffersBusinessLogic {
     func loadOffers(request: Offers.LoadOffers.Request)
+    func filterOffers(request: Offers.FilterOffers.Request)
+    func sortOffers(request: Offers.SortOffers.Request)
 }
 
 protocol OffersDataStore {
     var offers: [Offer] { get set }
+    var filteredOffers: [Offer] { get set }
 }
 
 
@@ -32,6 +35,7 @@ class OffersInteractor: OffersDataStore {
     var worker: OffersWorker?
     
     var offers: [Offer] = []
+    var filteredOffers: [Offer] = []
 }
 
 
@@ -52,8 +56,33 @@ extension OffersInteractor: OffersBusinessLogic {
                 offers: offers,
                 error: error
             )
-            presenter?.presentOffers(response: response)
+            self.presenter?.presentOffers(response: response)
+        }
+    }
+    
+    func filterOffers(request: Offers.FilterOffers.Request) {
+        worker = OffersWorker()
+        worker?.filterOffers(offers: offers, filterOptions: request.filterOptions) { offers in
+            self.filteredOffers = offers
+            
+            let tempResponse = Offers.FilterOffers.Response(
+                offers: offers,
+                error: nil
+            )
+            self.presenter?.presentFilteredOffers(response: tempResponse)
+        }
+    }
+    
+    func sortOffers(request: Offers.SortOffers.Request) {
+        worker = OffersWorker()
+        worker?.sortOffers(offers: filteredOffers, sortOptions: request.sortOptions) { offers in
+            self.filteredOffers = offers
+            
+            let tempResponse = Offers.SortOffers.Response(
+                offers: offers,
+                error: nil
+            )
+            self.presenter?.presentSortedOffers(response: tempResponse)
         }
     }
 }
-

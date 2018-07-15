@@ -16,6 +16,13 @@ import UIKit
 protocol OffersDisplayLogic: class {
     func displayOffers(viewModel: Offers.LoadOffers.ViewModel)
     func displayError(viewModel: Offers.LoadOffers.ViewModel)
+    
+    func displayOffers(viewModel: Offers.FilterOffers.ViewModel)
+    func displayError(viewModel: Offers.FilterOffers.ViewModel)
+    
+    func displayOffers(viewModel: Offers.SortOffers.ViewModel)
+    func displayError(viewModel: Offers.SortOffers.ViewModel)
+    
 }
 
 
@@ -30,9 +37,14 @@ class OffersViewController: UIViewController {
     
     @IBOutlet var tableView: UITableView?
     @IBOutlet var spinner: UIActivityIndicatorView?
-    @IBOutlet var segue: UIStoryboardSegue?
     
     var offers: [Offer] = []
+    
+    var currentSortOptions: Offers.SortOptions?
+    var sortComponent: SortViewController?
+    
+    var currentFilterOptions: Offers.FilterOptions?
+    var filterComponent: FilterViewController?
     
     
     
@@ -79,16 +91,96 @@ class OffersViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        setInitialSortOptions()
+        setInitialFilterOptions()
         loadOffers()
+    }
+    
+    
+    
+    // MARK: UI Events
+    
+    @IBAction func sortPressed() {
+        showSort()
+    }
+    
+    @IBAction func filterPressed() {
+        showFilter()
     }
     
     
     
     // MARK: private methods
     
-    func loadOffers() {
+    private func setInitialSortOptions() {
+        currentSortOptions = Offers.SortOptions(
+            sortBy: .name, sortAscDesc: .ascending
+        )
+    }
+    
+    private func setInitialFilterOptions() {
+        currentFilterOptions = Offers.FilterOptions(
+            filterBy: .name, filterText: ""
+        )
+    }
+    
+    private func loadOffers() {
         let tempRequest = Offers.LoadOffers.Request()
         interactor?.loadOffers(request: tempRequest)
+    }
+    
+    private func filterData() {
+        let tempRequest = Offers.FilterOffers.Request(filterOptions: currentFilterOptions!)
+        interactor?.filterOffers(request: tempRequest)
+    }
+    
+    private func sortData() {
+        let tempRequest = Offers.SortOffers.Request(sortOptions: currentSortOptions!)
+        interactor?.sortOffers(request: tempRequest)
+    }
+    
+    private func showSort() {
+        guard sortComponent == nil else {
+            return
+        }
+        
+        sortComponent = SortViewController(nibName: "SortViewController", bundle: nil)
+        sortComponent?.delegate = self
+        sortComponent?.view.frame = CGRect(x: 0.0, y: 0.0, width: self.view.frame.width, height: self.view.frame.height)
+        self.view.addSubview((sortComponent?.view)!)
+    }
+    
+    private func showFilter() {
+        guard filterComponent == nil else {
+            return
+        }
+        
+        filterComponent = FilterViewController(nibName: "FilterViewController", bundle: nil)
+        filterComponent?.delegate = self
+        filterComponent?.view.frame = CGRect(x: 0.0, y: 0.0, width: self.view.frame.width, height: self.view.frame.height)
+        self.view.addSubview((filterComponent?.view)!)
+    }
+    
+    
+    
+    // MARK: fileprivate methods
+    
+    fileprivate func hideSort() {
+        guard sortComponent != nil else {
+            return
+        }
+        
+        sortComponent?.view.removeFromSuperview()
+        sortComponent = nil
+    }
+    
+    fileprivate func hideFilter() {
+        guard filterComponent != nil else {
+            return
+        }
+        
+        filterComponent?.view.removeFromSuperview()
+        filterComponent = nil
     }
 }
 
@@ -128,6 +220,50 @@ extension OffersViewController: UITableViewDelegate {
 
 // MARK: -
 
+extension OffersViewController: SortViewControllerOutput {
+    
+    // MARK: SortViewControllerOutput
+    
+    func sortBySegmentChanged(_ option: SortByOption) {
+        currentSortOptions?.sortBy = option
+        filterData()
+    }
+    
+    func sortAscDescSegmentChanged(_ option: SortAscDescOption) {
+        currentSortOptions?.sortAscDesc = option
+        filterData()
+    }
+    
+    func sortCancelPressed() {
+        hideSort()
+    }
+}
+
+
+// MARK: -
+
+extension OffersViewController: FilterViewControllerOutput {
+    
+    // MARK: FilterViewControllerOutput
+    
+    func filterBySegmentChanged(_ option: SortByOption) {
+        currentFilterOptions?.filterBy = option
+        filterData()
+    }
+    
+    func filterTextfieldChanged(_ option: String) {
+        currentFilterOptions?.filterText = option
+        filterData()
+    }
+    
+    func filterCancelPressed() {
+        hideFilter()
+    }
+}
+
+
+// MARK: -
+
 extension OffersViewController: OffersDisplayLogic {
     
     // MARK: OffersDisplayLogic
@@ -138,12 +274,40 @@ extension OffersViewController: OffersDisplayLogic {
         }
         
         offers = tempOffers
+        filterData()
+    }
+    
+    func displayError(viewModel: Offers.LoadOffers.ViewModel) {
+        //
+    }
+    
+    func displayOffers(viewModel: Offers.FilterOffers.ViewModel) {
+        guard let tempOffers = viewModel.offers else {
+            return
+        }
+        
+        offers = tempOffers
+        
+        sortData()
+    }
+    
+    func displayError(viewModel: Offers.FilterOffers.ViewModel) {
+        //
+    }
+    
+    func displayOffers(viewModel: Offers.SortOffers.ViewModel) {
+        guard let tempOffers = viewModel.offers else {
+            return
+        }
+        
+        offers = tempOffers
+        
         tableView?.reloadData()
         
         spinner?.stopAnimating()
     }
     
-    func displayError(viewModel: Offers.LoadOffers.ViewModel) {
+    func displayError(viewModel: Offers.SortOffers.ViewModel) {
         //
     }
 }
