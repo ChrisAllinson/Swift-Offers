@@ -8,6 +8,14 @@
 
 import UIKit
 
+
+protocol OfferTableViewCellInput {
+    func lazyLoadImage(_ imageUrl: String?)
+}
+
+
+// MARK: -
+
 class OfferTableViewCell: UITableViewCell {
     
     // MARK: instance variables
@@ -35,5 +43,28 @@ class OfferTableViewCell: UITableViewCell {
     
     @IBAction func buttonPressed() {
         print("BUTTON PRESSED")
+    }
+}
+
+
+// MARK: -
+
+extension OfferTableViewCell: OfferTableViewCellInput {
+    
+    // MARK: OfferTableViewCellInput
+    
+    func lazyLoadImage(_ imageUrl: String?) {
+        guard imageUrl != nil else {
+            return
+        }
+        
+        if let tempUrl = URL(string: imageUrl!) {
+            URLSession.shared.dataTask(with: tempUrl) { (data, response, error) in
+                DispatchQueue.main.async {
+                    let tempImage = UIImage(data: data!)
+                    self.offerImage?.image = tempImage
+                }
+            }.resume()
+        }
     }
 }
