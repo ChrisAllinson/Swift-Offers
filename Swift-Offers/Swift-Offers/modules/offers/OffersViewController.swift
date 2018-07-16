@@ -198,6 +198,7 @@ extension OffersViewController: UITableViewDataSource {
             cell.nameLabel?.text = offers[indexPath.row].name
             cell.descriptionLabel?.text = offers[indexPath.row].description
             cell.priceLabel?.text = "$\(offers[indexPath.row].price)"
+            cell.lazyLoadImage(offers[indexPath.row].imageUrl)
             return cell
         }
         return UITableViewCell()

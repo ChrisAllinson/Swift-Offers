@@ -14,7 +14,7 @@ import UIKit
 
 
 protocol OffersWorkerInput {
-    func fetchOffers(completion: (_ offers: [Offer]?, _ error: OfferError?) -> ())
+    func fetchOffers(completion: @escaping (_ offers: [Offer]?, _ error: OfferError?) -> ())
     func sortOffers(offers: [Offer], sortOptions: Offers.SortOptions, completion: @escaping (_ sortedOffers: [Offer]) -> Void)
     func filterOffers(offers: [Offer], filterOptions: Offers.FilterOptions, completion: @escaping (_ filteredOffers: [Offer]) -> Void)
 }
@@ -22,16 +22,53 @@ protocol OffersWorkerInput {
 
 // MARK: -
 
-class OffersWorker: OffersWorkerInput {
+class OffersWorker {
+    
+    // MARK: instance variables
+    
+    var apiManager: ApiManagerInput?
+    
+    
+    
+    // MARK: lifecycle methods
+    
+    init(apiManager: ApiManagerInput) {
+        self.apiManager = apiManager
+    }
+}
+
+
+// MARK: -
+
+extension OffersWorker: OffersWorkerInput {
     
     // MARK: OffersWorkerInput
     
-    func fetchOffers(completion: (_ offers: [Offer]?, _ error: OfferError?) -> ()) {
-        var tempArray: [Offer] = []
-        for i in 0...10000 {
-            tempArray.append(Offer(id: "ABCD", name: "Offer \(i)", price: Double(i), imageUrl: nil, description: "description description description description description description description description"))
+    func fetchOffers(completion: @escaping (_ offers: [Offer]?, _ error: OfferError?) -> ()) {
+        apiManager?.get("http://www.mocky.io/v2/5b4bf1673100001e04a7de6b") { responseObj in
+            guard let tempArray = responseObj as? Array<Dictionary<String,Any>> else {
+                completion(nil, OfferError(statusCode: 500, message: "data error") )
+                return
+            }
+            
+            var offersArray: [Offer] = []
+            for tempDict in tempArray {
+                do {
+                    let tempOffer = try Offer(object: tempDict)
+                    offersArray.append(tempOffer)
+                } catch (let error) {
+                    print("ERROR: \(error)")
+                }
+            }
+            
+            completion(offersArray, nil)
         }
-        completion(tempArray, nil)
+        
+//        var tempArray: [Offer] = []
+//        for i in 0...10000 {
+//            tempArray.append(Offer(id: "ABCD", name: "Offer \(i)", price: Double(i), imageUrl: "http://www.allinson.ca/libs/allinson-styleguide/global/images/logo/logo.png", description: "description description description description description description description description"))
+//        }
+//        completion(tempArray, nil)
         
 //        completion(
 //            [
@@ -83,24 +120,24 @@ class OffersWorker: OffersWorkerInput {
         DispatchQueue.global(qos: .background).async {
             let sortedOffers = offers.sorted {
                 switch (sortOptions.sortBy)! {
-                case .name:
-                    if sortOptions.sortAscDesc == .ascending {
-                        return $0.name < $1.name
-                    } else {
-                        return $0.name > $1.name
-                    }
-                case .description:
-                    if sortOptions.sortAscDesc == .ascending {
-                        return $0.description ?? "" < $1.description ?? ""
-                    } else {
-                        return $0.description ?? "" > $1.description ?? ""
-                    }
-                case .price:
-                    if sortOptions.sortAscDesc == .ascending {
-                        return $0.price < $1.price
-                    } else {
-                        return $0.price > $1.price
-                    }
+                    case .name:
+                        if sortOptions.sortAscDesc == .ascending {
+                            return $0.name < $1.name
+                        } else {
+                            return $0.name > $1.name
+                        }
+                    case .description:
+                        if sortOptions.sortAscDesc == .ascending {
+                            return $0.description ?? "" < $1.description ?? ""
+                        } else {
+                            return $0.description ?? "" > $1.description ?? ""
+                        }
+                    case .price:
+                        if sortOptions.sortAscDesc == .ascending {
+                            return $0.price < $1.price
+                        } else {
+                            return $0.price > $1.price
+                        }
                 }
             }
             

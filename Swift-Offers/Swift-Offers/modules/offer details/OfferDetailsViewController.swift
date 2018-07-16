@@ -97,7 +97,7 @@ class OfferDetailsViewController: UIViewController {
     
     fileprivate func lazyLoadImage() {
         let tempUrl = URL(string: "http://www.allinson.ca/libs/allinson-styleguide/global/images/logo/logo.png")!
-        URLSession.shared.dataTask(with: tempUrl) { ( data, response, error) in
+        URLSession.shared.dataTask(with: tempUrl) { (data, response, error) in
             DispatchQueue.main.async {
                 let tempImage = UIImage(data: data!)
                 self.offerImage?.image = tempImage

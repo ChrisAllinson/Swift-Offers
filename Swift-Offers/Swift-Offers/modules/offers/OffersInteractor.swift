@@ -32,7 +32,7 @@ class OffersInteractor: OffersDataStore {
     // MARK: instance variables
     
     var presenter: OffersPresentationLogic?
-    var worker: OffersWorker?
+    var worker: OffersWorker = OffersWorker(apiManager: ApiManager())
     
     var offers: [Offer] = []
     var filteredOffers: [Offer] = []
@@ -46,8 +46,7 @@ extension OffersInteractor: OffersBusinessLogic {
     // MARK: OffersBusinessLogic
     
     func loadOffers(request: Offers.LoadOffers.Request) {
-        worker = OffersWorker()
-        worker?.fetchOffers() { offers, error in
+        worker.fetchOffers() { offers, error in
             if offers != nil {
                 self.offers = offers!
             }
@@ -61,8 +60,7 @@ extension OffersInteractor: OffersBusinessLogic {
     }
     
     func filterOffers(request: Offers.FilterOffers.Request) {
-        worker = OffersWorker()
-        worker?.filterOffers(offers: offers, filterOptions: request.filterOptions) { offers in
+        worker.filterOffers(offers: offers, filterOptions: request.filterOptions) { offers in
             self.filteredOffers = offers
             
             let tempResponse = Offers.FilterOffers.Response(
@@ -74,8 +72,7 @@ extension OffersInteractor: OffersBusinessLogic {
     }
     
     func sortOffers(request: Offers.SortOffers.Request) {
-        worker = OffersWorker()
-        worker?.sortOffers(offers: filteredOffers, sortOptions: request.sortOptions) { offers in
+        worker.sortOffers(offers: filteredOffers, sortOptions: request.sortOptions) { offers in
             self.filteredOffers = offers
             
             let tempResponse = Offers.SortOffers.Response(
